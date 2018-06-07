@@ -1,0 +1,10 @@
+extends:
+  - airbnb
+rules:
+  react/jsx-no-bind: off
+  no-underscore-dangle: off
+  react/jsx-filename-extension: off
+  react/forbid-prop-types: off
+  class-methods-use-this: off
+globals:
+  __DEV__: false
