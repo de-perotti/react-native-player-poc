@@ -13,9 +13,9 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <FullScreenView>
+          <VideoPlayer />
           <SearchAndDownload />
-          {/*<VideoPlayer />*/}
-          {/*<VideoList />*/}
+          <VideoList />
         </FullScreenView>
       </Provider>
     );

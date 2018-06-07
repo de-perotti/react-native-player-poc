@@ -1,42 +1,14 @@
 import React from 'react';
-import { View } from 'react-native';
-import VideoPlayer from 'react-native-video-player';
-import axios from 'axios';
+import { View, Text } from 'react-native';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import VideoPlayerRN from 'react-native-video-player';
 
 
-class VideoPlayerComponent extends React.Component {
-  static getDerivedStateFromProps(props, state) {
-    return props.id !== state.id ? { id: props.id } : null;
-  }
-
+class VideoPlayer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      id: 0,
-      thumbnail: null,
-      url: null,
-      width: null,
-      height: null,
-      duration: null,
-    };
     this.onEnd = this.onEnd.bind(this);
-  }
-
-  async componentDidUpdate(prevProps) {
-    if (prevProps.id !== this.props.id) {
-      try {
-        const res = await axios.get(`https://player.vimeo.com/video/${this.props.id}/config`);
-        const _res = res.json();
-
-        this.setState({
-          ...(_res.video),
-          url: get360pVideo(_res),
-          thumbnail: _res.video.thumbs['640'],
-        });
-      } catch (e) {
-        //
-      }
-    }
   }
 
   async onEnd() {
@@ -44,15 +16,18 @@ class VideoPlayerComponent extends React.Component {
   }
 
   render() {
+    if (!this.props.selectedVideo) return null;
+
+    const { thumbnail, path, config } = this.props.selectedVideo;
+
     return (
       <View>
-        <VideoPlayer
+        <Text>{config.title}</Text>
+        <VideoPlayerRN
           endWithThumbnail
-          thumbnail={{ uri: this.state.thumbnail }}
-          video={{ uri: this.state.url }}
-          videoWidth={this.state.width}
-          videoHeight={this.state.height}
-          duration={this.state.duration}
+          thumbnail={{ uri: `file://${thumbnail.path}` }}
+          video={{ uri: `file://${path}` }}
+          duration={config.duration}
           onEnd={this.onEnd}
         />
       </View>
@@ -60,4 +35,16 @@ class VideoPlayerComponent extends React.Component {
   }
 }
 
-export default VideoPlayerComponent;
+VideoPlayer.defaultProps = {
+  selectedVideo: null,
+};
+
+VideoPlayer.propTypes = {
+  selectedVideo: PropTypes.object,
+};
+
+const mapStateToProps = state => ({
+  selectedVideo: state.videos[state.selected],
+});
+
+export default connect(mapStateToProps)(VideoPlayer);

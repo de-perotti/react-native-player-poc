@@ -1,33 +1,44 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, ScrollView } from 'react-native';
+import thunkVideos from '../thunk/videos';
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  box: {
     padding: 10,
-    margin: 10,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
   },
   scrollView: {
     flex: 1,
+    padding: 10,
   },
 });
 
 class FullScreenView extends React.Component {
+  componentDidMount() {
+    this.props.fetchVideos();
+  }
+
   render() {
     return (
-      <View
+      <ScrollView
         style={[
           styles.root,
         ]}
       >
-        <ScrollView style={styles.scrollView}>
-          { this.props.children }
-        </ScrollView>
-      </View>
+        <View style={styles.scrollView}>
+          <View style={styles.box}>
+            { this.props.children }
+          </View>
+        </View>
+      </ScrollView>
     );
   }
 }
@@ -37,6 +48,11 @@ FullScreenView.propTypes = {
     PropTypes.node,
     PropTypes.arrayOf(PropTypes.node),
   ]).isRequired,
+  fetchVideos: PropTypes.func.isRequired,
 };
 
-export default FullScreenView;
+const mapDispatchToProps = dispatch => ({
+  fetchVideos: bindActionCreators(thunkVideos.all, dispatch),
+});
+
+export default connect(null, mapDispatchToProps)(FullScreenView);

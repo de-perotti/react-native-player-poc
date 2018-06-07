@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
-import requests from './requests';
+import videos from './videos';
+import selected from './selected';
 
 export default combineReducers({
-  requests,
+  selected,
+  videos,
 });
